@@ -22,43 +22,28 @@ namespace PortugolLanguage
 
         public override dynamic Eval()
         {
-            double resultado;
             Thread.CurrentThread.CurrentCulture = new CultureInfo("EN");
             var operadores = new[] { "+", "-", "*", "/" };
 
             if (operadores.Contains(operador.ToLower()))
-            {
                 return OperadoresComuns();
-            }
+
             try
             {
                 switch (operador.ToLower())
                 {
-                    case "=": resultado = arg1 == arg2;
-                        break;
-                    case "<": resultado = arg1 < arg2;
-                        break;
-                    case ">": resultado = arg1 > arg2;
-                        break;
-                    case "<=": resultado = arg1 <= arg2;
-                        break;
-                    case ">=": resultado = arg1 >= arg2;
-                        break;
-                    case "<>": resultado = arg1 != arg2;
-                        break;
-                    case "e": resultado = arg1 && arg2;
-                        break;
-                    case "ou": resultado = arg1 || arg2;
-                        break;
-                    default: resultado = 0;
-                        break;
+                    case "=": return arg1 == arg2;
+                    case "<": return arg1 < arg2;
+                    case ">": return arg1 > arg2;
+                    case "<=": return arg1 <= arg2;
+                    case ">=": return arg1 >= arg2;
+                    case "<>": return arg1 != arg2;
+                    case "e": return Convert.ToBoolean(arg1) && Convert.ToBoolean(arg2);
+                    case "ou": return Convert.ToBoolean(arg1) || Convert.ToBoolean(arg2);
+                    default: return 0;
                 }
             }
-            catch (Exception)
-            {
-                resultado = 0;
-            }
-            return resultado;
+            catch (Exception) { return 0; }
         }
 
         private dynamic OperadoresComuns()
@@ -67,16 +52,11 @@ namespace PortugolLanguage
             arg2 = Convert.ToDouble(arg2);
             switch (operador.ToLower())
             {
-                case "+":
-                    return arg1 + arg2;
-                case "-":
-                    return arg1 - arg2;
-                case "*":
-                    return arg1 * arg2;
-                case "/":
-                    return arg1 / arg2;
-                default:
-                    return 0;
+                case "+": return arg1 + arg2;
+                case "-": return arg1 - arg2;
+                case "*": return arg1 * arg2;
+                case "/": return arg1 / arg2;
+                default: return 0;
             }
         }
     }
