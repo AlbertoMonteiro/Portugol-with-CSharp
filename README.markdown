@@ -9,8 +9,11 @@ Exemplo de código:
 
 
 Operadores binários: +, -, * , /
+
 Operadores lógicos: =, <, >, <=, >=, <>
+
 Condição SE: SE condicao ENTAO expressao SENAO expressao
+
 Chamada de função: NomeDaFuncao, NomeDaFuncao(1,2)...
 
 A unica função implementada foi a Randomico que recebe nenhum ou 1 parametro
