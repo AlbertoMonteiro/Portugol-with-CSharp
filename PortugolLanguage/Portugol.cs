@@ -9,7 +9,7 @@ namespace PortugolLanguage
         {
             LanguageFlags = LanguageFlags.CreateAst;
 
-            var numero = new NumberLiteral("Numero");
+            var numero = new NumberLiteral("Numero", NumberOptions.AllowSign);
             var identificador = new IdentifierTerminal("Identificador");
 
             var expressao = new NonTerminal("Expressao");
@@ -29,7 +29,7 @@ namespace PortugolLanguage
             termo.Rule = numero;
             operacaoComParentese.Rule = ToTerm("(") + expressao + ")";
             operacaoBinaria.Rule = expressao + operador + expressao;
-            operador.Rule = ToTerm("+") | "-" | "*" | "/" | "=" | "<" | ">" | "<=" | ">=" | "<>" | "E" | "OU";
+            operador.Rule = ToTerm("+") | "-" | "*" | "/" | "^" | "%" | "=" | "<" | ">" | "<=" | ">=" | "<>" | "E" | "OU";
 
             sePart.Rule = ToTerm("Se");
             entaoPart.Rule = ToTerm("Entao");
@@ -44,7 +44,7 @@ namespace PortugolLanguage
             RegisterOperators(1, "E", "OU");
             RegisterOperators(5, "=" , "<" , ">" , "<=" , ">=" , "<>");
             RegisterOperators(10, "+", "-");
-            RegisterOperators(20, "*", "/");
+            RegisterOperators(20, "*", "/", "%", "^");
             MarkPunctuation("(", ")");
             RegisterBracePair("(", ")");
 

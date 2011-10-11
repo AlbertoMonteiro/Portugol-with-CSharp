@@ -13,6 +13,7 @@ namespace PortugolLanguage
 
         public override void Init(ParsingContext context, ParseTreeNode treeNode)
         {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("EN");
             base.Init(context, treeNode);
             operador = treeNode.MappedChildNodes[1].FindTokenAndGetText();
 
@@ -22,8 +23,7 @@ namespace PortugolLanguage
 
         public override dynamic Eval()
         {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("EN");
-            var operadores = new[] { "+", "-", "*", "/" };
+            var operadores = new[] { "+", "-", "*", "/", "%", "^" };
 
             if (operadores.Contains(operador.ToLower()))
                 return OperadoresComuns();
@@ -56,6 +56,8 @@ namespace PortugolLanguage
                 case "-": return arg1 - arg2;
                 case "*": return arg1 * arg2;
                 case "/": return arg1 / arg2;
+                case "%": return arg1 % arg2;
+                case "^": return Math.Pow(arg1,arg2);
                 default: return 0;
             }
         }
