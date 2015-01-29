@@ -1,4 +1,5 @@
-﻿using Irony.Parsing;
+﻿using Irony.Interpreter;
+using Irony.Parsing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PortugolLanguage.Test
@@ -8,12 +9,14 @@ namespace PortugolLanguage.Test
     {
         private Portugol grammar;
         private Parser parser;
+        private ScriptApp scriptApp;
 
         [TestInitialize]
         public void Setup()
         {
             grammar = new Portugol();
             parser = new Parser(grammar);
+            scriptApp = new ScriptApp(parser.Language);
         }
 
         [TestMethod]
@@ -21,8 +24,9 @@ namespace PortugolLanguage.Test
         {
             const string EXPRESSION = "1+3";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node) parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
+
             Assert.AreEqual(4, value);
         }
 
@@ -30,8 +34,8 @@ namespace PortugolLanguage.Test
         public void PossoExecutarUmaInstrucaoDeSomaComNumeroNegativo()
         {
             const string EXPRESSION = "-1+3";
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
             Assert.AreEqual(2, value);
         }
@@ -41,8 +45,8 @@ namespace PortugolLanguage.Test
         {
             const string EXPRESSION = "3 - 1.5";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
             Assert.AreEqual(1.5, value);
         }
@@ -52,8 +56,8 @@ namespace PortugolLanguage.Test
         {
             const string EXPRESSION = "7 / 2";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
             Assert.AreEqual(3.5, value);
         }
@@ -63,8 +67,8 @@ namespace PortugolLanguage.Test
         {
             const string EXPRESSION = "1.25 * 5.80";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
             Assert.AreEqual(7.25, value);
         }
@@ -74,10 +78,10 @@ namespace PortugolLanguage.Test
         {
             const string EXPRESSION = "2 ^ 3";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
-            Assert.AreEqual(8, value);
+            Assert.AreEqual(8d, value);
         }
 
         [TestMethod]
@@ -85,21 +89,23 @@ namespace PortugolLanguage.Test
         {
             const string EXPRESSION = "15 % 2";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
-            Assert.AreEqual(1, value);
+            Assert.AreEqual(1d, value);
         }
 
         [TestMethod]
         public void PossoExecutarUmaInstrucaoComTodasAsOperacoesJuntas()
         {
+            //5
             const string EXPRESSION = "(((3 + 5) + (6 / 2) - 1) / 2) ^ 2";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
-            Assert.AreEqual(25, value);
+
+            Assert.AreEqual(25d, value);
         }
 
         [TestMethod]
@@ -117,10 +123,11 @@ namespace PortugolLanguage.Test
                                 SENAO
                                     60000";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
-            Assert.AreEqual(30000, value);
+
+            Assert.AreEqual(30000d, value);
         }
 
         [TestMethod]
@@ -132,42 +139,39 @@ namespace PortugolLanguage.Test
                                         SENAO
                                             60000";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
-            Assert.AreEqual(60000, value);
+
+            Assert.AreEqual(60000d, value);
         }
 
         [TestMethod]
         public void PossoFazerUmaInstrucaoSeComAAfirmacaoFalsa()
         {
-            const string EXPRESSION = @"SE 1 < 0 e 2 < 1 ENTAO
-                                            30000
-                                        SENAO
-                                            60000";
+            const string EXPRESSION = @"SE 1 < 0 e 2 < 1 
+                                        ENTAO 30000 
+                                        SENAO 60000";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
-            Assert.AreEqual(60000, value);
+            Assert.AreEqual(60000d, value);
         }
 
         [TestMethod]
         public void PossoFazerUmaInstrucaoComBlocosDeComentarios()
         {
-            const string EXPRESSION = @"//Comentário
-                                       /*Bloco de
-                                        Comentario
-                                        */
+            const string EXPRESSION = @"/*Bloco de comentário*/
                                         SE 1 < 0 e 2 < 1 ENTAO
                                             30000
                                         SENAO
                                             60000";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
-            Assert.AreEqual(60000, value);
+            Assert.AreEqual(60000d, value);
         }
 
         [TestMethod]
@@ -181,10 +185,11 @@ namespace PortugolLanguage.Test
                                     SENAO
                                         28";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
-            Assert.AreEqual(27, value);
+
+            Assert.AreEqual(27d, value);
         }
 
         [TestMethod]
@@ -198,26 +203,6 @@ namespace PortugolLanguage.Test
             Assert.IsTrue(value);
         }
 
-//        [TestMethod]
-//        public void DeveLancarFunctionNotFoundExceptionSePassarUmaFuncaoOuPalavraNaoReconhecida()
-//        {
-//            const string EXPRESSION = @"SE salarioContratual > 1000 ENTAO
-//                                            30000
-//                                        SENAO
-//                                            60000";
-
-//            ParseTree parseTree = parser.Parse(EXPRESSION);
-
-//            try
-//            {
-//                compiler.Compile().Eval(null);
-//            }
-//            catch (FunctionNotFoundException ex)
-//            {
-//                Assert.AreEqual("Função não identificada: salarioContratual", ex.Message);
-//            }
-//        }
-
         [TestMethod]
         public void PossoFazerComparacaoComDatas()
         {
@@ -226,8 +211,9 @@ namespace PortugolLanguage.Test
                                         SENAO
                                             0";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
+
 
             Assert.AreEqual(1, value);
         }
@@ -237,8 +223,9 @@ namespace PortugolLanguage.Test
         {
             const string EXPRESSION = @"06.10.2011 - 05.10.2010";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
+
 
             Assert.AreEqual(366, value);
         }
@@ -252,47 +239,12 @@ namespace PortugolLanguage.Test
                                        SENAO
                                             2";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
+
 
             Assert.AreEqual(1, value);
         }
-
-//        [TestMethod]
-//        public void DeveLancarTermExpectedExceptionCasoFalteAlgumOperandoNoAlgoritmo()
-//        {
-//            const string EXPRESSION = @"1 +";
-
-//            ParseTree parseTree = parser.Parse(EXPRESSION);
-
-//            try
-//            {
-//                compiler.Compile().Eval(null);
-//            }
-//            catch (Exception ex)
-//            {
-//                Assert.IsInstanceOf(typeof(TermExpectedException), ex);
-//            }
-//        }
-
-//        [TestMethod]
-//        public void DeveLancarTermExpectedExceptionCasoOAlgoritmoNaoEncontreAInstrucaoSENAO()
-//        {
-//            const string EXPRESSION = @"SE 1 + 1 = 2 ENTAO
-//                                        2";
-
-//            ParseTree parseTree = parser.Parse(EXPRESSION);
-
-//            try
-//            {
-//                compiler.Compile().Eval(null);
-//            }
-//            catch (Exception ex)
-//            {
-//                Assert.IsInstanceOf(typeof(TermExpectedException), ex);
-//                Assert.AreEqual("Instrução Esperada: 'SENAO'", ex.Message);
-//            }
-//        }
 
         [TestMethod]
         public void PossoRetornarUmValorNegativo()
@@ -302,8 +254,9 @@ namespace PortugolLanguage.Test
                                        SENAO
                                        + 1";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
+
 
             Assert.AreEqual(-1, value);
         }
@@ -322,10 +275,10 @@ namespace PortugolLanguage.Test
                                         SENAO
                                             0";
 
-            ParseTree parseTree = parser.Parse(EXPRESSION);
-            var value = ((Node)parseTree.Root.AstNode).Eval();
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
 
-            Assert.AreEqual(2000, value);
+            Assert.AreEqual(2000d, value);
         }
     }
 }

@@ -2,26 +2,29 @@ using System;
 using System.Linq;
 using System.Globalization;
 using System.Threading;
+using Irony.Ast;
+using Irony.Interpreter;
+using Irony.Interpreter.Ast;
 using Irony.Parsing;
 
 namespace PortugolLanguage
 {
-    public class OperacaoBinaria : Node
+    public class OperacaoBinaria : AstNode
     {
         private dynamic arg1, arg2;
         private string operador;
 
-        public override void Init(ParsingContext context, ParseTreeNode treeNode)
+        public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("EN");
             base.Init(context, treeNode);
-            operador = treeNode.MappedChildNodes[1].FindTokenAndGetText();
+            operador = treeNode.ChildNodes[1].FindTokenAndGetText();
 
-            arg1 = GetValue(treeNode, 0);
-            arg2 = GetValue(treeNode, 2);
+            arg1 = ((AstNode) treeNode.ChildNodes[0].AstNode).Evaluate(null);
+            arg2 = ((AstNode)treeNode.ChildNodes[2].AstNode).Evaluate(null);
         }
 
-        public override dynamic Eval()
+        protected override object DoEvaluate(ScriptThread thread)
         {
             var operadores = new[] { "+", "-", "*", "/", "%", "^" };
 
@@ -45,6 +48,7 @@ namespace PortugolLanguage
             }
             catch (Exception) { return 0; }
         }
+
 
         private dynamic OperadoresComuns()
         {

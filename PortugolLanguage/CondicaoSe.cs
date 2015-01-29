@@ -1,30 +1,35 @@
 using System;
+using Irony.Ast;
+using Irony.Interpreter;
+using Irony.Interpreter.Ast;
 using Irony.Parsing;
 
 namespace PortugolLanguage
 {
-    public class CondicaoSe : Node
+    public class CondicaoSe : AstNode
     {
         private bool resultadoCondicao;
         private double resultadoVerdadeiro, resultadoFalso;
 
-        public override void Init(ParsingContext context, ParseTreeNode treeNode)
+
+        public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
 
-            dynamic eval = ((Node) AddChild("Arg", treeNode.MappedChildNodes[1])).Eval();
-            resultadoCondicao = Convert.ToBoolean(eval);
+            var childNode = (AstNode)treeNode.ChildNodes[1].AstNode;
+            resultadoCondicao = Convert.ToBoolean(childNode.Evaluate(null));
 
-            resultadoVerdadeiro = treeNode.MappedChildNodes[3].AstNode != null ?
-                ((Node)AddChild("Arg", treeNode.MappedChildNodes[3])).Eval() :
-                int.Parse(treeNode.MappedChildNodes[3].FindTokenAndGetText());
+            var value = (AstNode) treeNode.ChildNodes[3].AstNode;
+            resultadoVerdadeiro = Convert.ToInt32(value.Evaluate(null));
 
-            resultadoFalso = treeNode.MappedChildNodes[5].AstNode != null ?
-                ((Node)AddChild("Arg", treeNode.MappedChildNodes[5])).Eval() :
-                int.Parse(treeNode.MappedChildNodes[5].FindTokenAndGetText());
+            var parseTreeNode = treeNode.ChildNodes[5];
+
+            var astNode = (AstNode)parseTreeNode.AstNode;
+            var o1 = astNode.Evaluate(null);
+            resultadoFalso = Convert.ToInt32(o1);
         }
 
-        public override dynamic Eval()
+        protected override object DoEvaluate(ScriptThread thread)
         {
             return resultadoCondicao ? resultadoVerdadeiro : resultadoFalso;
         }

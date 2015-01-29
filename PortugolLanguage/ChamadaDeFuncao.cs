@@ -1,27 +1,30 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Irony.Ast;
+using Irony.Interpreter;
+using Irony.Interpreter.Ast;
 using Irony.Parsing;
 
 namespace PortugolLanguage
 {
-    public class ChamadaDeFuncao : Node
+    public class ChamadaDeFuncao : AstNode
     {
         private string nomeDaFunca;
         private readonly List<double> argumentos = new List<double>();
 
-        public override void Init(ParsingContext context, ParseTreeNode treeNode)
+        public override void Init(AstContext context, ParseTreeNode treeNode)
         {
             base.Init(context, treeNode);
 
-            nomeDaFunca = treeNode.MappedChildNodes[0].FindTokenAndGetText();
-            if (treeNode.MappedChildNodes.Count < 2) return;
-            
-            foreach (var mappedChildNode in treeNode.MappedChildNodes[1].MappedChildNodes)
-                argumentos.Add(GetValue(mappedChildNode));
+            nomeDaFunca = treeNode.ChildNodes[0].FindTokenAndGetText();
+            if (treeNode.ChildNodes.Count < 2) return;
+
+            foreach (var mappedChildNode in treeNode.ChildNodes[1].ChildNodes)
+                argumentos.Add((double)mappedChildNode.FindToken().Value);
         }
 
-        public override dynamic Eval()
+        protected override object DoEvaluate(ScriptThread thread)
         {
             if (nomeDaFunca.ToLower() == "randomico")
             {
