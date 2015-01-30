@@ -27,7 +27,7 @@ namespace PortugolLanguage.Test
             var tree = parser.Parse(EXPRESSION);
             var value = scriptApp.Evaluate(tree);
 
-            Assert.AreEqual(4, value);
+            Assert.AreEqual(4d, value);
         }
 
         [TestMethod]
@@ -37,7 +37,7 @@ namespace PortugolLanguage.Test
             var tree = parser.Parse(EXPRESSION);
             var value = scriptApp.Evaluate(tree);
 
-            Assert.AreEqual(2, value);
+            Assert.AreEqual(2d, value);
         }
 
         [TestMethod]
@@ -201,6 +201,18 @@ namespace PortugolLanguage.Test
             var value = parseTree.HasErrors();
 
             Assert.IsTrue(value);
+        }
+
+        [TestMethod]
+        public void PossoUsarAFuncaoRandomico()
+        {
+            const string EXPRESSION = "Randomico(4)";
+
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
+
+            var valores = new[] { 0, 1, 2, 3 };
+            CollectionAssert.Contains(valores, value);
         }
 
         [TestMethod]

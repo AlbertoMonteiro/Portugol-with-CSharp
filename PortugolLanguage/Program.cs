@@ -1,5 +1,6 @@
 ﻿using System;
 using Irony.Interpreter;
+using Irony.Interpreter.Ast;
 using Irony.Parsing;
 
 namespace PortugolLanguage
@@ -31,12 +32,15 @@ A unica função implementada foi a Randomico que recebe nenhum ou 1 parametro")
             var parser = new Parser(grammar);
             string expressao = Console.ReadLine();
             var tree = parser.Parse(expressao);
-            var scriptApp = new ScriptApp(parser.Language);
-            var result = scriptApp.Evaluate(tree);
+            /*var scriptApp = new ScriptApp(parser.Language);
+            var result = scriptApp.Evaluate(tree);*/
+
             
             if (!tree.HasErrors() && tree.Root.AstNode != null)
             {
-                Console.Write("Resultado:\n\t{0}\n", result);
+                var astNode = (AstNode)tree.Root.AstNode;
+                var result = astNode.Evaluate(null);
+                Console.Write("Resultado:\n    {0}\n", result);
             }
             else
                 foreach (var parserMessage in tree.ParserMessages)

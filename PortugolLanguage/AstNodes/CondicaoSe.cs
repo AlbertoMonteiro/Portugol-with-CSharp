@@ -4,7 +4,7 @@ using Irony.Interpreter;
 using Irony.Interpreter.Ast;
 using Irony.Parsing;
 
-namespace PortugolLanguage
+namespace PortugolLanguage.AstNodes
 {
     public class CondicaoSe : AstNode
     {

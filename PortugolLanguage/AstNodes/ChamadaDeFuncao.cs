@@ -6,7 +6,7 @@ using Irony.Interpreter;
 using Irony.Interpreter.Ast;
 using Irony.Parsing;
 
-namespace PortugolLanguage
+namespace PortugolLanguage.AstNodes
 {
     public class ChamadaDeFuncao : AstNode
     {
@@ -21,7 +21,7 @@ namespace PortugolLanguage
             if (treeNode.ChildNodes.Count < 2) return;
 
             foreach (var mappedChildNode in treeNode.ChildNodes[1].ChildNodes)
-                argumentos.Add((double)mappedChildNode.FindToken().Value);
+                argumentos.Add(Convert.ToDouble(mappedChildNode.FindToken().Value));
         }
 
         protected override object DoEvaluate(ScriptThread thread)
