@@ -53,9 +53,7 @@
   <ItemGroup>
     <Compile Include="AstNodes\ChamadaDeFuncao.cs" />
     <Compile Include="AstNodes\CondicaoSe.cs" />
-    <Compile Include="AstNodes\DummyNode.cs" />
     <Compile Include="AstNodes\OperacaoBinaria.cs" />
-    <Compile Include="AstNodes\OperadorNode.cs" />
     <Compile Include="Portugol.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

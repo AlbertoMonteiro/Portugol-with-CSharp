@@ -1,4 +1,5 @@
 using Irony.Interpreter;
+using Irony.Interpreter.Ast;
 using Irony.Parsing;
 using PortugolLanguage.AstNodes;
 
@@ -14,18 +15,18 @@ namespace PortugolLanguage
             var numero = new NumberLiteral("Numero", NumberOptions.AllowSign);
             var identificador = new IdentifierTerminal("Identificador");
 
-            var expressao = new NonTerminal("Expressao", typeof (DummyNode));
-            var termo = new NonTerminal("Termo", typeof (DummyNode));
+            var expressao = new NonTerminal("Expressao", typeof (AstNode));
+            var termo = new NonTerminal("Termo", typeof (AstNode));
             var chamadaFuncao = new NonTerminal("Chamada funcao", typeof (ChamadaDeFuncao));
             var operacaoBinaria = new NonTerminal("Operacao binaria", typeof (OperacaoBinaria));
-            var operacaoComParentese = new NonTerminal("Operacao com parentese", typeof (DummyNode));
+            var operacaoComParentese = new NonTerminal("Operacao com parentese", typeof (AstNode));
             var se = new NonTerminal("Se", typeof (CondicaoSe));
-            var operador = new NonTerminal("Operador", typeof (OperadorNode));
-            var operadorLogico = new NonTerminal("Operador logico", typeof (DummyNode));
-            var argumentos = new NonTerminal("Argumentos", typeof (DummyNode));
-            var sePart = new NonTerminal("Se parte", typeof (DummyNode));
-            var entaoPart = new NonTerminal("Entao parte", typeof (DummyNode));
-            var senaoPart = new NonTerminal("Senao parte", typeof (DummyNode));
+            var operador = new NonTerminal("Operador", typeof(AstNode));
+            var operadorLogico = new NonTerminal("Operador logico", typeof (AstNode));
+            var argumentos = new NonTerminal("Argumentos", typeof (AstNode));
+            var sePart = new NonTerminal("Se parte", typeof (AstNode));
+            var entaoPart = new NonTerminal("Entao parte", typeof (AstNode));
+            var senaoPart = new NonTerminal("Senao parte", typeof (AstNode));
 
             NonGrammarTerminals.Add(new CommentTerminal("comment1", "/*", "*/"));
 
@@ -52,7 +53,7 @@ namespace PortugolLanguage
             MarkPunctuation("(", ")");
             RegisterBracePair("(", ")");
 
-            MarkTransient(expressao, termo, operadorLogico, operacaoComParentese);
+            MarkTransient(expressao, operador, termo, operadorLogico, operacaoComParentese);
             Root = expressao;
             LanguageFlags = LanguageFlags.CreateAst;
         }

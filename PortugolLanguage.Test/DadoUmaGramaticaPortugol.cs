@@ -31,6 +31,18 @@ namespace PortugolLanguage.Test
         }
 
         [TestMethod]
+        public void RespeitaProcedencia()
+        {
+            const string EXPRESSION = "10*1+2";
+
+            var tree = parser.Parse(EXPRESSION);
+            var value = scriptApp.Evaluate(tree);
+
+            Assert.AreEqual(12d, value);
+        }
+
+
+        [TestMethod]
         public void PossoExecutarUmaInstrucaoDeSomaComNumeroNegativo()
         {
             const string EXPRESSION = "-1+3";
